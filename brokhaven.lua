@@ -154,7 +154,7 @@ local function showKeyPrompt()
     local valid = false
     submitBtn.MouseButton1Click:Connect(function()
         if input.Text:lower() == KEYSYSTEM_KEY then
-            status.Text = "KEY ACCEPTED! Loading HOKALAZA..."
+            status.Text = "KEY ACCEPTED! Loading OK..."
             status.TextColor3 = Color3.fromRGB(100, 255, 100)
             task.wait(1.2)
             gui:Destroy()
@@ -162,7 +162,7 @@ local function showKeyPrompt()
         else
             status.Text = "INVALID KEY!"
             status.TextColor3 = Color3.fromRGB(255, 100, 100)
-            input.Text = ""
+            input.Text = "130"
             task.wait(1.5)
             status.Text = "Try again or get key from Discord."
             status.TextColor3 = Color3.fromRGB(150, 200, 255)
