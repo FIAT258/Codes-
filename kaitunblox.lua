@@ -40,7 +40,161 @@ Tabs.Farm:AddToggle("KillAura", {
     Title = "Kill Aura",
     Default = false,
     Callback = function()
-        -- $
+        -- SERVICES
+local Players = game:GetService("Players")
+local TweenService = game:GetService("TweenService")
+local RunService = game:GetService("RunService")
+local VirtualInputManager = game:GetService("VirtualInputManager")
+
+local player = Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local hrp = character:WaitForChild("HumanoidRootPart")
+
+-- ======================
+-- NOCLIP
+-- ======================
+local noclipConn
+local function enableNoclip()
+    if noclipConn then return end
+    noclipConn = RunService.Stepped:Connect(function()
+        for _, v in pairs(character:GetDescendants()) do
+            if v:IsA("BasePart") then
+                v.CanCollide = false
+            end
+        end
+    end)
+end
+
+local function disableNoclip()
+    if noclipConn then
+        noclipConn:Disconnect()
+        noclipConn = nil
+    end
+end
+
+-- ======================
+-- PEGAR MOB MAIS PERTO
+-- ======================
+local function getClosestMob(radius)
+    local enemies = workspace:FindFirstChild("Enemies")
+    if not enemies then return nil end
+
+    local closest, minDist = nil, math.huge
+
+    for _, mob in pairs(enemies:GetChildren()) do
+        local hum = mob:FindFirstChildOfClass("Humanoid")
+        local root = mob:FindFirstChild("HumanoidRootPart")
+        if hum and root and hum.Health > 0 then
+            local dist = (root.Position - hrp.Position).Magnitude
+            if dist < radius and dist < minDist then
+                minDist = dist
+                closest = mob
+            end
+        end
+    end
+
+    return closest
+end
+
+-- ======================
+-- HITBOX
+-- ======================
+local function expandHitbox(mob)
+    local root = mob:FindFirstChild("HumanoidRootPart")
+    if root then
+        root.Size = Vector3.new(130,130,130)
+        root.Transparency = 0.6
+        root.CanCollide = false
+    end
+end
+
+-- ======================
+-- EQUIPAR ARMA / COMBAT
+-- ======================
+local function forceFastAttack()
+    for _, v in pairs(character:GetDescendants()) do
+        if v:IsA("NumberValue") then
+            local name = v.Name:lower()
+            if name:find("melee") or name:find("combat") or name:find("attack") then
+                v.Value = 1.9
+            end
+        end
+    end
+end
+
+-- ======================
+-- AUTO CLICK
+-- ======================
+local function autoClick()
+    local cam = workspace.CurrentCamera
+    local x = cam.ViewportSize.X / 2
+    local y = cam.ViewportSize.Y / 2
+
+    VirtualInputManager:SendMouseButtonEvent(x, y, 0, true, game, 1)
+    VirtualInputManager:SendMouseButtonEvent(x, y, 0, false, game, 1)
+end
+
+-- ======================
+-- KILL AURA LOOP
+-- ======================
+task.spawn(function()
+    while true do
+        if Options.KillAura.Value then
+            local radius = Options.BringMobs.Value and 90 or 230
+            local mob = getClosestMob(radius)
+
+            if mob then
+                local hum = mob:FindFirstChildOfClass("Humanoid")
+                local root = mob:FindFirstChild("HumanoidRootPart")
+
+                if hum and root then
+                    expandHitbox(mob)
+                    enableNoclip()
+                    forceFastAttack()
+
+                    -- APERTA TECLA 1
+                    VirtualInputManager:SendKeyEvent(true, "One", false, game)
+                    VirtualInputManager:SendKeyEvent(false, "One", false, game)
+
+                    local tweenTime = (root.Position - hrp.Position).Magnitude / 200
+                    local tween = TweenService:Create(
+                        hrp,
+                        TweenInfo.new(tweenTime, Enum.EasingStyle.Linear),
+                        {CFrame = root.CFrame}
+                    )
+                    tween:Play()
+
+                    -- LOOP DURANTE ATAQUE
+                    while tween.PlaybackState == Enum.PlaybackState.Playing
+                    and hum.Health > 0
+                    and Options.KillAura.Value do
+
+                        if Options.BringMobs.Value then
+                            for _, v in pairs(workspace.Enemies:GetChildren()) do
+                                local r = v:FindFirstChild("HumanoidRootPart")
+                                local h = v:FindFirstChildOfClass("Humanoid")
+                                if r and h and h.Health > 0 then
+                                    if (r.Position - root.Position).Magnitude <= 90 then
+                                        r.CFrame = root.CFrame * CFrame.new(0, 0, -4)
+                                    end
+                                end
+                            end
+                        end
+
+                        autoClick()
+                        task.wait()
+                    end
+                end
+            else
+                task.wait(1)
+            end
+        else
+            disableNoclip()
+            task.wait(0.5)
+        end
+    end
+end)
+
     end
 })
 
