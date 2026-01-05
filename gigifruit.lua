@@ -32,7 +32,7 @@ Tabs.Farm:AddToggle("AutoFarm", {
     Title = "Auto Farm",
     Default = false,
     Callback = function()
-        $
+        -- $
     end
 })
 
@@ -40,7 +40,7 @@ Tabs.Farm:AddToggle("KillAura", {
     Title = "Kill Aura",
     Default = false,
     Callback = function()
-        $
+        -- $
     end
 })
 
@@ -48,7 +48,7 @@ Tabs.Farm:AddToggle("AutoFarmBoss", {
     Title = "Auto Farm Boss",
     Default = false,
     Callback = function()
-        $
+        -- $
     end
 })
 
@@ -65,8 +65,8 @@ Tabs.Farm:AddDropdown("BossSelect", {
     },
     Multi = false,
     Default = 1,
-    Callback = function()
-        $
+    Callback = function(Value)
+        -- $ -- Value contem a seleção do boss
     end
 })
 
@@ -78,7 +78,7 @@ Tabs.Fruta:AddToggle("AutoCollectFruit", {
     Title = "Auto Coletar Fruta",
     Default = false,
     Callback = function()
-        $
+        -- $
     end
 })
 
@@ -86,7 +86,7 @@ Tabs.Fruta:AddToggle("StoreFruits", {
     Title = "Store Fruits",
     Default = false,
     Callback = function()
-        $
+        -- $
     end
 })
 
@@ -94,7 +94,7 @@ Tabs.Fruta:AddToggle("HopFruit", {
     Title = "Hop Fruit (BETA)",
     Default = false,
     Callback = function()
-        $
+        -- $
     end
 })
 
@@ -102,7 +102,7 @@ Tabs.Fruta:AddToggle("SpinFruit", {
     Title = "Spin Fruit (BAN RISCO)",
     Default = false,
     Callback = function()
-        $
+        -- $
     end
 })
 
@@ -114,7 +114,7 @@ Tabs.Missao:AddToggle("AutoGodHuman", {
     Title = "Auto God Human",
     Default = false,
     Callback = function()
-        $
+        -- $
     end
 })
 
@@ -122,7 +122,7 @@ Tabs.Missao:AddToggle("AutoTushita", {
     Title = "Auto Tushita",
     Default = false,
     Callback = function()
-        $
+        -- $
     end
 })
 
@@ -130,7 +130,7 @@ Tabs.Missao:AddToggle("AutoKatakuriV1", {
     Title = "Auto Katakuri V1",
     Default = false,
     Callback = function()
-        $
+        -- $
     end
 })
 
@@ -138,7 +138,7 @@ Tabs.Missao:AddToggle("AutoKatakuriV2", {
     Title = "Auto Katakuri V2",
     Default = false,
     Callback = function()
-        $
+        -- $
     end
 })
 
@@ -146,7 +146,7 @@ Tabs.Missao:AddToggle("AutoBossTiki", {
     Title = "Auto Boss Tiki",
     Default = false,
     Callback = function()
-        $
+        -- $
     end
 })
 
@@ -154,7 +154,7 @@ Tabs.Missao:AddToggle("EliteBoss", {
     Title = "Elite Boss",
     Default = false,
     Callback = function()
-        $
+        -- $
     end
 })
 
@@ -162,7 +162,7 @@ Tabs.Missao:AddToggle("AutoYama", {
     Title = "Auto Yama (ONE CLICK)",
     Default = false,
     Callback = function()
-        $
+        -- $
     end
 })
 
@@ -170,7 +170,7 @@ Tabs.Missao:AddToggle("AutoCDK", {
     Title = "Auto CDK BETA (need Tushita and Yama)",
     Default = false,
     Callback = function()
-        $
+        -- $
     end
 })
 
@@ -178,7 +178,7 @@ Tabs.Missao:AddToggle("AutoSaberQuest", {
     Title = "Auto Saber Quest (need 200lv)",
     Default = false,
     Callback = function()
-        $
+        -- $
     end
 })
 
@@ -190,7 +190,7 @@ Tabs.V4:AddToggle("KaitunV4", {
     Title = "Kaitun V4",
     Default = false,
     Callback = function()
-        $
+        -- $
     end
 })
 
@@ -198,7 +198,7 @@ Tabs.V4:AddToggle("AutoMirage", {
     Title = "Auto Mirage",
     Default = false,
     Callback = function()
-        $
+        -- $
     end
 })
 
@@ -206,7 +206,7 @@ Tabs.V4:AddToggle("AntiHitPlayer", {
     Title = "Anti Hit Player BETA (NEED DRAGON STORM)",
     Default = false,
     Callback = function()
-        $
+        -- $
     end
 })
 
@@ -218,7 +218,7 @@ Tabs.Config:AddToggle("BringMobs", {
     Title = "Bring Mobs",
     Default = false,
     Callback = function()
-        $
+        -- $
     end
 })
 
@@ -226,7 +226,7 @@ Tabs.Config:AddToggle("FullLight", {
     Title = "Full Light",
     Default = false,
     Callback = function()
-        $
+        -- $
     end
 })
 
@@ -234,7 +234,7 @@ Tabs.Config:AddToggle("RemoveFog", {
     Title = "Remover Nevoa",
     Default = false,
     Callback = function()
-        $
+        -- $
     end
 })
 
@@ -242,7 +242,7 @@ Tabs.Config:AddToggle("FastAttack", {
     Title = "Fast Attack (LAG)",
     Default = false,
     Callback = function()
-        $
+        -- $
     end
 })
 
@@ -250,7 +250,7 @@ Tabs.Config:AddToggle("ServerHop", {
     Title = "Server Hop",
     Default = false,
     Callback = function()
-        $
+        -- $
     end
 })
 
