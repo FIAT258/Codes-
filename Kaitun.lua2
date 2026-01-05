@@ -18,7 +18,7 @@ local Tabs = {
     Farm = Window:AddTab({ Title = "Farm", Icon = "swords" }),
     Fruta = Window:AddTab({ Title = "Fruta", Icon = "apple" }),
     Missao = Window:AddTab({ Title = "Missão", Icon = "scroll" }),
-    V4 = Window:AddTab({ Title = "V4", Icon = "zap" }),
+    V4 = Window:AddTab({ Title = "V4", Icon = "moon" }),
     Config = Window:AddTab({ Title = "Configuração", Icon = "settings" })
 }
 
