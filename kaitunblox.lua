@@ -44,7 +44,6 @@ Tabs.Farm:AddToggle("KillAura", {
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 local TweenService = game:GetService("TweenService")
-local VirtualInputManager = game:GetService("VirtualInputManager")
 
 local player = Players.LocalPlayer
 local character = player.Character or player.CharacterAdded:Wait()
@@ -73,51 +72,20 @@ local function disableNoclip()
 end
 
 -- ======================
--- PLAYER HITBOX (ATAQUE)
--- ======================
-local function expandPlayerHitbox()
-    for _, v in pairs(character:GetDescendants()) do
-        if v:IsA("BasePart") then
-            local n = v.Name:lower()
-            if n:find("hand") or n:find("handle") then
-                v.Size = v.Size * 2.5
-                v.CanCollide = false
-            end
-        end
-    end
-end
-
--- ======================
--- AUTO CLICK (CONTROLADO)
--- ======================
-local lastClick = 0
-local function autoClick()
-    if tick() - lastClick < 0.15 then return end
-    lastClick = tick()
-
-    local cam = workspace.CurrentCamera
-    local x = cam.ViewportSize.X / 2
-    local y = cam.ViewportSize.Y / 2
-
-    VirtualInputManager:SendMouseButtonEvent(x,y,0,true,game,1)
-    VirtualInputManager:SendMouseButtonEvent(x,y,0,false,game,1)
-end
-
--- ======================
--- MOB MAIS PRÓXIMO
+-- PEGAR MOB MAIS PRÓXIMO
 -- ======================
 local function getClosestMob(radius)
     local enemies = workspace:FindFirstChild("Enemies")
     if not enemies then return nil end
 
-    local closest, dist = nil, math.huge
+    local closest, minDist = nil, math.huge
     for _, mob in pairs(enemies:GetChildren()) do
         local hum = mob:FindFirstChildOfClass("Humanoid")
         local root = mob:FindFirstChild("HumanoidRootPart")
         if hum and root and hum.Health > 0 then
             local d = (root.Position - hrp.Position).Magnitude
-            if d < radius and d < dist then
-                dist = d
+            if d < radius and d < minDist then
+                minDist = d
                 closest = mob
             end
         end
@@ -150,30 +118,23 @@ task.spawn(function()
     while true do
         if Options.KillAura.Value then
             enableNoclip()
-            expandPlayerHitbox()
 
-            local radius = Options.BringMobs.Value and 90 or 230
-            local mob = getClosestMob(radius)
+            local mob = getClosestMob(230)
 
             if mob then
                 local hum = mob:FindFirstChildOfClass("Humanoid")
                 local root = mob:FindFirstChild("HumanoidRootPart")
 
                 if hum and root then
-                    -- POSIÇÃO FLUTUANDO ACIMA DA CABEÇA
-                    local targetCFrame = root.CFrame * CFrame.new(0, 18, 0)
-
-                    -- Tween curto e contínuo (NÃO PARA)
-                    local tween = TweenService:Create(
-                        hrp,
-                        TweenInfo.new(0.25, Enum.EasingStyle.Linear),
-                        {CFrame = targetCFrame}
-                    )
-                    tween:Play()
-
-                    -- DURANTE O ATAQUE
+                    -- TWEEN INFINITO ACIMA DA CABEÇA
                     while hum.Health > 0 and Options.KillAura.Value do
-                        autoClick()
+                        local targetCFrame = root.CFrame * CFrame.new(0, 30, 0)
+
+                        TweenService:Create(
+                            hrp,
+                            TweenInfo.new(0.25, Enum.EasingStyle.Linear),
+                            {CFrame = targetCFrame}
+                        ):Play()
 
                         if Options.BringMobs.Value then
                             pullMobsBelow(90)
