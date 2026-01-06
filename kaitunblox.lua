@@ -5,7 +5,7 @@ local InterfaceManager = loadstring(game:HttpGet("https://raw.githubusercontent.
 
 -- Window
 local Window = Fluent:CreateWindow({
-    Title = "FIAT HUB (Blox Fruits)",
+    Title = "FIAT HUB (Blox Fruits BETA)",
     SubTitle = "by fiat",
     TabWidth = 160,
     Size = UDim2.fromOffset(580, 460),
