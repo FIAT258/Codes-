@@ -1,0 +1,111 @@
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local TweenService = game:GetService("TweenService")
+
+local player = Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local hrp = character:WaitForChild("HumanoidRootPart")
+
+-- ======================
+-- NOCLIP
+-- ======================
+local noclipConn
+local function enableNoclip()
+    if noclipConn then return end
+    noclipConn = RunService.Stepped:Connect(function()
+        for _, v in pairs(character:GetDescendants()) do
+            if v:IsA("BasePart") then
+                v.CanCollide = false
+            end
+        end
+    end)
+end
+
+local function disableNoclip()
+    if noclipConn then
+        noclipConn:Disconnect()
+        noclipConn = nil
+    end
+end
+
+-- ======================
+-- PEGAR MOB MAIS PRÓXIMO
+-- ======================
+local function getClosestMob(radius)
+    local enemies = workspace:FindFirstChild("Enemies")
+    if not enemies then return nil end
+
+    local closest, minDist = nil, math.huge
+    for _, mob in pairs(enemies:GetChildren()) do
+        local hum = mob:FindFirstChildOfClass("Humanoid")
+        local root = mob:FindFirstChild("HumanoidRootPart")
+        if hum and root and hum.Health > 0 then
+            local d = (root.Position - hrp.Position).Magnitude
+            if d < radius and d < minDist then
+                minDist = d
+                closest = mob
+            end
+        end
+    end
+    return closest
+end
+
+-- ======================
+-- PUXAR TODOS OS MOBS PRA BAIXO DO PLAYER
+-- ======================
+local function pullMobsBelow(radius)
+    local enemies = workspace:FindFirstChild("Enemies")
+    if not enemies then return end
+
+    for _, mob in pairs(enemies:GetChildren()) do
+        local hum = mob:FindFirstChildOfClass("Humanoid")
+        local root = mob:FindFirstChild("HumanoidRootPart")
+        if hum and root and hum.Health > 0 then
+            if (root.Position - hrp.Position).Magnitude <= radius then
+                root.CFrame = hrp.CFrame * CFrame.new(0, -25, 0)
+            end
+        end
+    end
+end
+
+-- ======================
+-- LOOP PRINCIPAL KILL AURA
+-- ======================
+task.spawn(function()
+    while true do
+        if Options.KillAura.Value then
+            enableNoclip()
+
+            local mob = getClosestMob(230)
+
+            if mob then
+                local hum = mob:FindFirstChildOfClass("Humanoid")
+                local root = mob:FindFirstChild("HumanoidRootPart")
+
+                if hum and root then
+                    -- TWEEN INFINITO ACIMA DA CABEÇA
+                    while hum.Health > 0 and Options.KillAura.Value do
+                        local targetCFrame = root.CFrame * CFrame.new(0, 30, 0)
+
+                        TweenService:Create(
+                            hrp,
+                            TweenInfo.new(0.25, Enum.EasingStyle.Linear),
+                            {CFrame = targetCFrame}
+                        ):Play()
+
+                        if Options.BringMobs.Value then
+                            pullMobsBelow(90)
+                        end
+
+                        task.wait(0.1)
+                    end
+                end
+            else
+                task.wait(0.5)
+            end
+        else
+            disableNoclip()
+            task.wait(0.5)
+        end
+    end
+end)
