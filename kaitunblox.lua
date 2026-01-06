@@ -190,7 +190,145 @@ Tabs.Fruta:AddToggle("AutoCollectFruit", {
     Title = "Auto Coletar Fruta",
     Default = false,
     Callback = function()
-        -- $
+        -- =========================
+-- CONTROLE (LIGA / DESLIGA)
+-- =========================
+_G.AutoCollectFruit = false -- <<< CONTROLE AQUI
+
+-- =========================
+-- SERVICES
+-- =========================
+local Players = game:GetService("Players")
+local TweenService = game:GetService("TweenService")
+local RunService = game:GetService("RunService")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+local player = Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local hrp = character:WaitForChild("HumanoidRootPart")
+
+-- =========================
+-- LISTA DE FRUTAS
+-- =========================
+local FRUIT_NAMES = {
+    "Rocket","Spin","Blade","Spring","Bomb","Smoke","Spike","Flame","Eagle","Ice",
+    "Sand","Dark","Diamond","Light","Rubber","Creation","Ghost","Magma","Quake","Buddha",
+    "Love","Spider","Sound","Phoenix","Portal","Lightning","Pain","Blizzard","Gravity","Mammoth",
+    "T-Rex","Dough","Shadow","Venom","Control","Gas","Spirit","Leopard","Yeti","Kitsune","Dragon"
+}
+
+local function isFruit(part)
+    return part:IsA("BasePart") and table.find(FRUIT_NAMES, part.Name)
+end
+
+-- =========================
+-- NOCLIP
+-- =========================
+local noclipConn
+local function enableNoclip()
+    if noclipConn then return end
+    noclipConn = RunService.Stepped:Connect(function()
+        for _, v in pairs(character:GetDescendants()) do
+            if v:IsA("BasePart") then
+                v.CanCollide = false
+            end
+        end
+    end)
+end
+
+local function disableNoclip()
+    if noclipConn then
+        noclipConn:Disconnect()
+        noclipConn = nil
+    end
+end
+
+-- =========================
+-- IGNORAR FRUTAS ANTIGAS
+-- =========================
+local ignoredFruits = {}
+
+local function registerExisting(container)
+    for _, v in pairs(container:GetDescendants()) do
+        if isFruit(v) then
+            ignoredFruits[v] = true
+        end
+    end
+end
+
+-- Registrar quando ligar
+task.spawn(function()
+    local lastState = false
+    while true do
+        if _G.AutoCollectFruit and not lastState then
+            ignoredFruits = {}
+            registerExisting(workspace)
+            registerExisting(ReplicatedStorage)
+        end
+        lastState = _G.AutoCollectFruit
+        task.wait(0.2)
+    end
+end)
+
+-- =========================
+-- HIGHLIGHT AZUL
+-- =========================
+local function addHighlight(part)
+    local h = Instance.new("Highlight")
+    h.FillColor = Color3.fromRGB(0, 80, 160)
+    h.OutlineColor = Color3.fromRGB(0, 120, 255)
+    h.FillTransparency = 0.5
+    h.Adornee = part
+    h.Parent = part
+    return h
+end
+
+-- =========================
+-- TWEEN ATÉ FRUTA (INFINITO)
+-- =========================
+local function tweenToFruit(part)
+    if not _G.AutoCollectFruit then return end
+
+    enableNoclip()
+    local highlight = addHighlight(part)
+
+    while _G.AutoCollectFruit and part.Parent do
+        local distance = (hrp.Position - part.Position).Magnitude
+        local time = distance / 200
+
+        local tween = TweenService:Create(
+            hrp,
+            TweenInfo.new(time, Enum.EasingStyle.Linear),
+            {CFrame = part.CFrame}
+        )
+        tween:Play()
+        tween.Completed:Wait()
+
+        if (hrp.Position - part.Position).Magnitude < 5 then
+            break
+        end
+    end
+
+    if highlight then highlight:Destroy() end
+    disableNoclip()
+end
+
+-- =========================
+-- DETECTAR FRUTA NOVA
+-- =========================
+local function onNewInstance(inst)
+    if not _G.AutoCollectFruit then return end
+    if not isFruit(inst) then return end
+    if ignoredFruits[inst] then return end
+
+    task.spawn(function()
+        tweenToFruit(inst)
+    end)
+end
+
+workspace.DescendantAdded:Connect(onNewInstance)
+ReplicatedStorage.DescendantAdded:Connect(onNewInstance)
+            
     end
 })
 
