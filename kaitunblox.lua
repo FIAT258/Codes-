@@ -499,7 +499,20 @@ Tabs.Config:AddToggle("SafeZone", {
 Tabs.Config:AddButton({
     Title = "Redem Codes",
     Callback = function()
-        ----$
+        -- =========================
+-- LÓGICA: REDEEM ALL CODES
+-- =========================
+
+local function RedeemAllCodes(x2Code)
+    local Remotes = game:GetService("ReplicatedStorage"):WaitForChild("Remotes")
+    local RedeemRemote = Remotes:WaitForChild("Redeem")
+
+    for _, code in pairs(x2Code) do
+        RedeemRemote:InvokeServer(code)
+        task.wait(0.1) -- pequeno delay de segurança
+    end
+            end
+            
     end
 })
 
