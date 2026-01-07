@@ -415,7 +415,7 @@ Tabs.Fruta:AddToggle("HopFruit", {
     Title = "Hop Fruit (BETA)",
     Default = false,
     Callback = function()
-        ----$
+        ---$
     end
 })
 
@@ -656,7 +656,85 @@ Tabs.Config:AddToggle("ServerHop", {
     Title = "Server Hop",
     Default = false,
     Callback = function()
-        ----$
+        -- =========================
+-- SERVER HOP (COM COOLDOWN)
+-- =========================
+
+local TeleportService = game:GetService("TeleportService")
+local Players = game:GetService("Players")
+local HttpService = game:GetService("HttpService")
+
+local player = Players.LocalPlayer
+local PlaceId = game.PlaceId
+
+-- Controle externo (Fluent)
+ServerHop = false
+
+-- Proteções
+local hopping = false
+local lastHopTime = 0
+local COOLDOWN = 60 -- 1 minuto
+
+task.spawn(function()
+    while task.wait(2) do
+        -- se desligado, não faz nada
+        if not ServerHop then
+            continue
+        end
+
+        -- evita hop duplicado
+        if hopping then
+            continue
+        end
+
+        -- cooldown de segurança
+        if os.time() - lastHopTime < COOLDOWN then
+            continue
+        end
+
+        hopping = true
+        lastHopTime = os.time()
+
+        local servers = {}
+        local cursor = ""
+
+        repeat
+            local url = "https://games.roblox.com/v1/games/" .. PlaceId .. "/servers/Public?sortOrder=Asc&limit=100"
+            if cursor ~= "" then
+                url = url .. "&cursor=" .. cursor
+            end
+
+            local success, response = pcall(function()
+                return game:HttpGet(url)
+            end)
+
+            if not success then break end
+
+            local data = HttpService:JSONDecode(response)
+
+            for _, server in pairs(data.data) do
+                if server.playing < server.maxPlayers and server.id ~= game.JobId then
+                    table.insert(servers, server.id)
+                end
+            end
+
+            cursor = data.nextPageCursor or ""
+        until cursor == "" or #servers > 0
+
+        if #servers > 0 and ServerHop then
+            TeleportService:TeleportToPlaceInstance(
+                PlaceId,
+                servers[math.random(1, #servers)],
+                player
+            )
+        end
+
+        -- trava até próximo ciclo
+        task.wait(1)
+        hopping = false
+    end
+end)
+            
     end
 })
 
