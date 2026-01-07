@@ -337,7 +337,77 @@ Tabs.Fruta:AddToggle("StoreFruits", {
     Title = "Store Fruits",
     Default = false,
     Callback = function()
-        ----$
+        -- =========================
+-- AUTO STORE FRUIT (LÓGICA)
+-- =========================
+
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local player = Players.LocalPlayer
+
+-- CONTROLE (Fluent só muda isso)
+AutoStoreFruit = false
+
+-- MAPEAMENTO CORRETO
+local Fruits = {
+    ["Bomb Fruit"] = "Bomb-Bomb",
+    ["Smoke Fruit"] = "Smoke-Smoke",
+    ["Flame Fruit"] = "Flame-Flame",
+    ["Ice Fruit"] = "Ice-Ice",
+    ["Sand Fruit"] = "Sand-Sand",
+    ["Dark Fruit"] = "Dark-Dark",
+    ["Light Fruit"] = "Light-Light",
+    ["Magma Fruit"] = "Magma-Magma",
+    ["Quake Fruit"] = "Quake-Quake",
+    ["Buddha Fruit"] = "Buddha-Buddha",
+    ["Love Fruit"] = "Love-Love",
+    ["Spider Fruit"] = "Spider-Spider",
+    ["Sound Fruit"] = "Sound-Sound",
+    ["Phoenix Fruit"] = "Phoenix-Phoenix",
+    ["Portal Fruit"] = "Portal-Portal",
+    ["Blizzard Fruit"] = "Blizzard-Blizzard",
+    ["Gravity Fruit"] = "Gravity-Gravity",
+    ["Mammoth Fruit"] = "Mammoth-Mammoth",
+    ["T-Rex Fruit"] = "T-Rex-T-Rex",
+    ["Dough Fruit"] = "Dough-Dough",
+    ["Shadow Fruit"] = "Shadow-Shadow",
+    ["Venom Fruit"] = "Venom-Venom",
+    ["Control Fruit"] = "Control-Control",
+    ["Spirit Fruit"] = "Spirit-Spirit",
+    ["Leopard Fruit"] = "Leopard-Leopard",
+    ["Yeti Fruit"] = "Yeti-Yeti",
+    ["Kitsune Fruit"] = "Kitsune-Kitsune",
+    ["Dragon Fruit"] = "Dragon-Dragon"
+}
+
+-- LOOP ÚNICO (NUNCA DUPLICA)
+task.spawn(function()
+    while task.wait(1.5) do
+        if not AutoStoreFruit then
+            continue
+        end
+
+        for toolName, fruitKey in pairs(Fruits) do
+            local tool =
+                (player.Character and player.Character:FindFirstChild(toolName))
+                or player.Backpack:FindFirstChild(toolName)
+
+            if tool then
+                pcall(function()
+                    ReplicatedStorage.Remotes.CommF:InvokeServer(
+                        "StoreFruit",
+                        fruitKey,
+                        tool
+                    )
+                end)
+
+                -- evita spam no servidor
+                task.wait(0.4)
+            end
+        end
+    end
+end)
+            
     end
 })
 
