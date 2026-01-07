@@ -664,7 +664,31 @@ Tabs.Config:AddToggle("WalkOnWater", {
     Title = "Andar Sobre a Água",
     Default = false,
     Callback = function()
-        ----$
+        -- =====================
+-- WALK ON WATER (LOGIC)
+-- =====================
+
+local Workspace = game:GetService("Workspace")
+local Water = Workspace:WaitForChild("Map"):WaitForChild("WaterBase-Plane")
+
+WalkWater = false -- Fluent controla isso
+
+task.spawn(function()
+    local lastState = nil
+
+    while task.wait(0.5) do
+        if WalkWater ~= lastState then
+            lastState = WalkWater
+
+            if WalkWater then
+                Water.Size = Vector3.new(1000, 112, 1000)
+            else
+                Water.Size = Vector3.new(1000, 80, 1000)
+            end
+        end
+    end
+end)
+            
     end
 })
 
