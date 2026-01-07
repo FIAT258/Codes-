@@ -432,7 +432,7 @@ Tabs.Fruta:AddToggle("SpinFruit", {
 -- ======================
 
 Tabs.Missao:AddToggle("AutoGodHuman", {
-    Title = "Auto God Human",
+    Title = "Auto God Human(tenha matéria exige)",
     Default = false,
     Callback = function()
         ----$
@@ -524,7 +524,7 @@ Tabs.V4:AddToggle("AutoMirage", {
 })
 
 Tabs.V4:AddToggle("AntiHitPlayer", {
-    Title = "Anti Hit Player BETA",
+    Title = "Anti Hit Player (exige dragon storm)",
     Default = false,
     Callback = function()
         ----$
